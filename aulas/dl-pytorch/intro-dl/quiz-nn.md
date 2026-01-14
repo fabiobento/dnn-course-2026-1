@@ -36,6 +36,6 @@ How do neural network weights change during training?
 ||
 |---|
 |Item anterior **[⬅️Desenvolva e visualize um perceptron do zero](./perceptron.md)**|
-|Próximo item **[Desenvolvendo o forward pass do perceptron em Pytorch](./perceptron-pytorch.md)**| 
+|Próximo item **[➡️esenvolvendo o forward pass do perceptron em Pytorch](./perceptron-pytorch.md)**| 
 ||
 |Página inicial do curso **[🏠Índice do curso de Redes Neurais Produndas](../../../README.md)**|

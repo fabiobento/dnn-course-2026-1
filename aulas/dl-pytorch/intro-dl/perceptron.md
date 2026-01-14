@@ -25,6 +25,6 @@ Clique em uma dos links abaixo para abrir o notebook:
 ||
 |---|
 |Item anterior **[⬅️Visualizando o Backward Pass e o Fluxo de Gradiente com Autograd?](./autograd.md)**|
-|Próximo item **[Quiz - Fundamentos de Redes Neurais](./quiz-nn.md)** |
+|Próximo item **[➡️Quiz - Fundamentos de Redes Neurais](./quiz-nn.md)** |
 ||
 |Página inicial do curso **[🏠Índice do curso de Deep Learning com PyTorch](../README.md)**|
