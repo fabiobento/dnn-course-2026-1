@@ -13,4 +13,5 @@ Essa seção está estruturada para desenvolver suas habilidades em DL do zero:
 ||
 |---|
 |Próximo item **[➡️O que é deep learning e como redes neurais funcionam?](./what-is.md)** |
-|Página inicial do curso **[🏠Índice do curso de Deep Learning com PyTorch](../README.md)**|
+||
+|Página inicial do curso **[🏠Índice do curso de Redes Neurais Produndas](../../../README.md)**|
