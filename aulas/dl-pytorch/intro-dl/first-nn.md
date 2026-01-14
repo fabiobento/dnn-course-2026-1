@@ -12,8 +12,10 @@ Clique em uma dos links abaixo para abrir o notebook:
   </td>
 </table>
 
-
-Item anterior **[⬅️O que é Deep Learning e como funcionam as Redes Neurais?](./what-is.md)**
-
-Próximo item **[➡️Visualizando o Backward Pass e o Fluxo de Gradiente com Autograd](./autograd.md)** |
+||
+|---|
+|Item anterior **[⬅️O que é Deep Learning e como funcionam as Redes Neurais?](./what-is.md)**|
+|Próximo item **[➡️Visualizando o Backward Pass e o Fluxo de Gradiente com Autograd](./autograd.md)** |
+||
+|Página inicial do curso **[🏠Índice do curso de Deep Learning com PyTorch](../README.md)**|
 

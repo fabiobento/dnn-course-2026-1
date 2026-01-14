@@ -16,7 +16,9 @@ Clique em uma dos links abaixo para abrir o notebook:
   </td>
 </table>
 
-
-Item anterior **[⬅️Construindo uma Rede Neural e Visualizando o Forward Pass?](./first-nn.md)**
-
-Próximo item **[➡️Desenvolva e visualize um perceptron do zero](./perceptron.md)** 
+||
+|---|
+|Item anterior **[⬅️Construindo uma Rede Neural e Visualizando o Forward Pass?](./first-nn.md)**|
+|Próximo item **[➡️Desenvolva e visualize um perceptron do zero](./perceptron.md)** |
+||
+|Página inicial do curso **[🏠Índice do Curso de Deep Learning com PyTorch](../README.md)**|
