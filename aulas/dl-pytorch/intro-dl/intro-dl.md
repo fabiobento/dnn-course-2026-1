@@ -13,10 +13,12 @@ Nessa seção, você se familiarizará com os fundamentos do aprendizado profund
     - [O que é deep learning e como redes neurais funcionam?](./what-is.md)
     - [Construindo uma Rede Neural e Visualizando o Forward Pass](./first-nn.md)
     - [Visualizando o Backward Pass e o Fluxo de Gradiente com Autograd](./autograd.md)
-    - [Desenvolva e visualize um perceptron do zero](./perceptron.md)
+    - [Laboratório - Desenvolva e visualize um perceptron do zero](./lab-perceptron.md)
     - [Quiz - Fundamentos de Redes Neurais](./quiz-nn.md)        
 - Construindo uma rede neural de camada única
-    - [Desenvolvendo o forward pass do perceptron em Pytorch](./perceptron-pytorch.md)          
+    - [Desenvolvendo o forward pass do perceptron em Pytorch](./perceptron-pytorch.md)   
+    - [A regra de aprendizagem do perceptron e as atualizações de peso](./perceptron-learn.md)       
+    - [Treinar o Perceptron com a Regra de Aprendizagem do Perceptron](./perceptron-learn-train.md)
 - Trabalhando com Pytorch
 - Contruindo redes neurais Feedforward(FNNs)    
 

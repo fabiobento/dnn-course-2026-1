@@ -1,5 +1,6 @@
 # Desenvolvendo o forward pass do perceptron em Pytorch
 
+Neste notebook analisamos os Perceptrons, a unidade básica das redes neurais.
 
 
 Clique em uma dos links abaixo para abrir o notebook:
@@ -14,8 +15,8 @@ Clique em uma dos links abaixo para abrir o notebook:
 
 ||
 |---|
+|Próximo item **[➡️A regra de aprendizagem do perceptron e as atualizações de peso](./perceptron-learn.md)**|
 |Item anterior **[⬅️Quiz - Fundamentos de Redes Neurais](./quiz-nn.md)**|
-|Próximo item **[➡️Desenvolvendo o forward pass do perceptron em Pytorch](./perceptron-learn.md)**|
 ||
 |Página inicial do curso **[⬆️Introdução ao Deep Learning com PyTorch](./intro-dl.md)**|
 
