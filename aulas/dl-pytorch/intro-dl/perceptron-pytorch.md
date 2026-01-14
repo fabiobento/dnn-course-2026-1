@@ -17,4 +17,4 @@ Clique em uma dos links abaixo para abrir o notebook:
 |Item anterior **[⬅️Quiz - Fundamentos de Redes Neurais](./quiz-nn.md)**|
 |Próximo item **[➡️Desenvolvendo o forward pass do perceptron em Pytorch](./perceptron-learn.md)**|
 ||
-|Página inicial do curso **[🏠Índice do curso de Redes Neurais Produndas](../../../README.md)**|
+|Página inicial do curso **[⬆️Índice da Deep Learning(DL) com PyTorch](../dl-pytorch.md)**|

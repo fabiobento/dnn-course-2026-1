@@ -65,5 +65,5 @@ Uma compreensão sólida das redes neurais, seus componentes principais (**neuro
 | Item anterior **[⬅️Introdução ao Deep Learning com PyTorch](./intro-dl.md)** |
 | Próximo item **[➡️Construindo uma Rede Neural e Visualizando o Forward Pass](./first-nn.md)** |
 ||
-|Página inicial do curso **[🏠Índice do curso de Deep Learning com PyTorch](../README.md)**|
+|Página inicial do curso **[⬆️Índice da Deep Learning(DL) com PyTorch](../dl-pytorch.md)**|
 

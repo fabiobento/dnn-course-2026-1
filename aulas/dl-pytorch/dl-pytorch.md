@@ -1,7 +1,7 @@
 
 # Deep Learning(DL) com PyTorch
 
-Nesta parte do curso, você aprenderá os conceitos fundamentais do Deep Learning usando a biblioteca PyTorch.: 
+Nesta parte da disciplina, você aprenderá os conceitos fundamentais do Deep Learning usando a biblioteca PyTorch.: 
 - Você se familiarizará com os fundamentos do aprendizado profundo(*Deep Learning-DL*) e criará suas primeiras redes neurais com o **PyTorch**. 
 - Estudará como os neurônios trabalham juntos para reconhecer padrões
 - Explorará os recursos de tensor do PyTorch e
@@ -15,3 +15,6 @@ Por meio de exercícios práticos, você compreenderá a matemática por trás d
 2. [Redes Nerais Convolucionais](./cnn/intro-cnn.md)
 3. [Redes Neurais Recorrentes](./rnn/intro-rnn.md)
 4. [Técnicas de otimização e treinamento de modelos](./opt/intro-optimization.md)
+
+
+| **[🏠Página inicial da disciplina Redes Neurais Profundas](../../README.md)**|
