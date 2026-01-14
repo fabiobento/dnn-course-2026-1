@@ -17,4 +17,7 @@ Por meio de exercícios práticos, você compreenderá a matemática por trás d
 4. [Técnicas de otimização e treinamento de modelos](./opt/intro-optimization.md)
 
 
+||
+|---|
+|Próximo item **[➡️Introdução ao Deep Learning e Redes Neurais](./intro-dl/intro-dl.md)** |
 | **[🏠Página inicial da disciplina Redes Neurais Profundas](../../README.md)**|

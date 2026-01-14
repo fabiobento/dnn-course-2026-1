@@ -8,8 +8,7 @@ O processo termina com a atualização dos pesos e vieses através de um otimiza
 Clique em uma dos links abaixo para abrir o notebook:
 <table >
   <td>
-    <a href="https://colab
-    - research.google.com/github/fabiobento/dnn-course-2026-1/blob/main/aulas/dl-pytorch/intro-dl/docs/autograd.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+    <a href="https://colab.research.google.com/github/fabiobento/dnn-course-2026-1/blob/main/aulas/dl-pytorch/intro-dl/docs/autograd.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
   </td>
   <td>
     <a target="_blank" href="https://kaggle.com/kernels/welcome?src=https://github.com/fabiobento/dnn-course-2026-1/blob/main/aulas/dl-pytorch/intro-dl/docs/autograd.ipynb"><img src="https://kaggle.com/static/images/open-in-kaggle.svg" /></a>
@@ -18,7 +17,7 @@ Clique em uma dos links abaixo para abrir o notebook:
 
 ||
 |---|
-|Item anterior **[⬅️Construindo uma Rede Neural e Visualizando o Forward Pass?](./first-nn.md)**|
 |Próximo item **[➡️Desenvolva e visualize um perceptron do zero](./perceptron.md)** |
+|Item anterior **[⬅️Construindo uma Rede Neural e Visualizando o Forward Pass?](./first-nn.md)**|
 ||
-|Página inicial do curso **[⬆️Índice da Deep Learning(DL) com PyTorch](../dl-pytorch.md)**|
+|Página inicial do curso **[⬆️Introdução ao Deep Learning com PyTorch](./intro-dl.md)**|
