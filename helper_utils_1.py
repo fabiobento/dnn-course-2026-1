@@ -3,154 +3,146 @@ import matplotlib.pyplot as plt
 from IPython.display import clear_output
 import time
 
-
-
 def plot_data(distances, times, normalize=False):
     """
-    Creates a scatter plot of the data points.
+    Cria um gráfico de dispersão dos pontos de dados.
 
     Args:
-        distances: The input data points for the x-axis.
-        times: The target data points for the y-axis.
-        normalize: A boolean flag indicating whether the data is normalized.
+        distances: Os pontos de dados de entrada para o eixo x (distâncias).
+        times: Os pontos de dados de destino para o eixo y (tempos).
+        normalize: Um sinalizador booleano indicando se os dados estão normalizados.
     """
-    # Create a new figure with a specified size
+    # Cria uma nova figura com um tamanho especificado
     plt.figure(figsize=(8, 6))
 
-    # Plot the data points as a scatter plot
-    plt.plot(distances.numpy(), times.numpy(), color='orange', marker='o', linestyle='none', label='Actual Delivery Times')
+    # Plota os pontos de dados como um gráfico de dispersão
+    plt.plot(distances.numpy(), times.numpy(), color='orange', marker='o', linestyle='none', label='Tempos de Entrega Reais')
 
-    # Check if the data is normalized to set appropriate labels and title
+    # Verifica se os dados estão normalizados para definir rótulos e título apropriados
     if normalize:
-        # Set the plot title for normalized data
-        plt.title('Normalized Delivery Data (Bikes & Cars)')
-        # Set the x-axis label for normalized data
-        plt.xlabel('Normalized Distance')
-        # Set the y-axis label for normalized data
-        plt.ylabel('Normalized Time')
-        # Display the legend
+        # Define o título do gráfico para dados normalizados
+        plt.title('Dados de Entrega Normalizados (Bikes & Carros)')
+        # Define o rótulo do eixo x para dados normalizados
+        plt.xlabel('Distância Normalizada')
+        # Define o rótulo do eixo y para dados normalizados
+        plt.ylabel('Tempo Normalizado')
+        # Exibe a legenda
         plt.legend()
-        # Add a grid to the plot
+        # Adiciona uma grade ao gráfico
         plt.grid(True)
-        # Show the plot
+        # Mostra o gráfico
         plt.show()
 
-    # Handle the case for un-normalized data
+    # Trata o caso de dados não normalizados
     else:
-        # Set the plot title for un-normalized data
-        plt.title('Delivery Data (Bikes & Cars)')
-        # Set the x-axis label for un-normalized data
-        plt.xlabel('Distance (miles)')
-        # Set the y-axis label for un-normalized data
-        plt.ylabel('Time (minutes)')
-        # Display the legend
+        # Define o título do gráfico para dados originais
+        plt.title('Dados de Entrega (Bikes & Carros)')
+        # Define o rótulo do eixo x para dados originais
+        plt.xlabel('Distância (milhas)')
+        # Define o rótulo do eixo y para dados originais
+        plt.ylabel('Tempo (minutos)')
+        # Exibe a legenda
         plt.legend()
-        # Add a grid to the plot
+        # Adiciona uma grade ao gráfico
         plt.grid(True)
-        # Show the plot
+        # Mostra o gráfico
         plt.show()
-    
-    
 
 def plot_final_fit(model, distances, times, distances_norm, times_std, times_mean):
     """
-    Plots the predictions of a trained model against the original data,
-    after de-normalizing the predictions.
+    Plota as previsões de um modelo treinado contra os dados originais,
+    após desnormalizar as previsões.
 
     Args:
-        model: The trained model used for prediction.
-        distances: The original, un-normalized input data.
-        times: The original, un-normalized target data.
-        distances_norm: The normalized input data for the model.
-        times_std: The standard deviation used for de-normalization.
-        times_mean: The mean value used for de-normalization.
+        model: O modelo treinado usado para a previsão.
+        distances: Os dados de entrada originais, não normalizados.
+        times: Os dados de destino originais, não normalizados.
+        distances_norm: Os dados de entrada normalizados para o modelo.
+        times_std: O desvio padrão usado para desnormalização.
+        times_mean: O valor médio usado para desnormalização.
     """
-    # Set the model to evaluation mode
+    # Define o modelo para modo de avaliação
     model.eval()
 
-    # Disable gradient calculations for prediction
+    # Desativa o cálculo de gradientes para a previsão
     with torch.no_grad():
-        # Get predictions from the model using normalized data
+        # Obtém as previsões do modelo usando dados normalizados
         predicted_norm = model(distances_norm)
 
-    # De-normalize the predictions to their original scale
+    # Desnormaliza as previsões para sua escala original
     predicted_times = (predicted_norm * times_std) + times_mean
 
-    # Create a new figure for the plot
+    # Cria uma nova figura para o gráfico
     plt.figure(figsize=(8, 6))
 
-    # Plot the original data points
-    plt.plot(distances.numpy(), times.numpy(), color='orange', marker='o', linestyle='none', label='Actual Data (Bikes & Cars)')
+    # Plota os pontos de dados originais
+    plt.plot(distances.numpy(), times.numpy(), color='orange', marker='o', linestyle='none', label='Dados Reais (Bikes & Carros)')
 
-    # Plot the de-normalized predictions from the model
-    plt.plot(distances.numpy(), predicted_times.numpy(), color='green', label='Non-Linear Model Predictions')
+    # Plota as previsões desnormalizadas do modelo
+    plt.plot(distances.numpy(), predicted_times.numpy(), color='green', label='Previsões do Modelo Não Linear')
 
-    # Set the title of the plot
-    plt.title('Non-Linear Model Fit vs. Actual Data')
-    # Set the x-axis label
-    plt.xlabel('Distance (miles)')
-    # Set the y-axis label
-    plt.ylabel('Time (minutes)')
-    # Add a legend to the plot
+    # Define o título do gráfico
+    plt.title('Ajuste do Modelo Não Linear vs. Dados Reais')
+    # Define o rótulo do eixo x
+    plt.xlabel('Distância (milhas)')
+    # Define o rótulo do eixo y
+    plt.ylabel('Tempo (minutos)')
+    # Adiciona a legenda ao gráfico
     plt.legend()
-    # Enable the grid
+    # Ativa a grade
     plt.grid(True)
-    # Display the plot
+    # Exibe o gráfico
     plt.show()
-
-    
 
 def plot_training_progress(epoch, loss, model, distances_norm, times_norm):
     """
-    Plots the training progress of a model on normalized data,
-    showing the current fit at each epoch.
+    Plota o progresso do treinamento de um modelo em dados normalizados,
+    mostrando o ajuste atual em cada época.
 
     Args:
-        epoch: The current training epoch number.
-        loss: The loss value at the current epoch.
-        model: The model being trained.
-        distances_norm: The normalized input data.
-        times_norm: The normalized target data.
+        epoch: O número da época de treinamento atual.
+        loss: O valor da perda (loss) na época atual.
+        model: O modelo que está sendo treinado.
+        distances_norm: Os dados de entrada normalizados.
+        times_norm: Os dados de destino normalizados.
     """
-    # Clear the previous plot from the output cell
+    # Limpa o gráfico anterior da célula de saída
     clear_output(wait=True)
 
-    # Make predictions using the current state of the model
+    # Faz previsões usando o estado atual do modelo
     predicted_norm = model(distances_norm)
 
-    # Convert tensors to NumPy arrays for plotting
+    # Converte tensores para arrays NumPy para plotagem
     x_plot = distances_norm.numpy()
     y_plot = times_norm.numpy()
     
-    # Detach predictions from the computation graph and convert to NumPy
+    # Destaca as previsões do gráfico de computação e converte para NumPy
     y_pred_plot = predicted_norm.detach().numpy()
 
-    # Sort the data based on distance to ensure a smooth line plot
+    # Ordena os dados com base na distância para garantir uma linha suave no gráfico
     sorted_indices = x_plot.argsort(axis=0).flatten()
 
-    # Create a new figure for the plot
+    # Cria uma nova figura para o gráfico
     plt.figure(figsize=(8, 6))
 
-    # Plot the original normalized data points
-    plt.plot(x_plot, y_plot, color='orange', marker='o', linestyle='none', label='Actual Normalized Data')
+    # Plota os pontos de dados originais normalizados
+    plt.plot(x_plot, y_plot, color='orange', marker='o', linestyle='none', label='Dados Reais Normalizados')
 
-    # Plot the model's predictions as a line
-    plt.plot(x_plot[sorted_indices], y_pred_plot[sorted_indices], color='green', label='Model Predictions')
+    # Plota as previsões do modelo como uma linha
+    plt.plot(x_plot[sorted_indices], y_pred_plot[sorted_indices], color='green', label='Previsões do Modelo')
 
-    # Set the title of the plot, including the current epoch
-    plt.title(f'Epoch: {epoch + 1} | Normalized Training Progress')
-    # Set the x-axis label
-    plt.xlabel('Normalized Distance')
-    # Set the y-axis label
-    plt.ylabel('Normalized Time')
-    # Display the legend
+    # Define o título do gráfico, incluindo a época atual
+    plt.title(f'Época: {epoch + 1} | Progresso do Treinamento Normalizado')
+    # Define o rótulo do eixo x
+    plt.xlabel('Distância Normalizada')
+    # Define o rótulo do eixo y
+    plt.ylabel('Tempo Normalizado')
+    # Exibe a legenda
     plt.legend()
-    # Add a grid to the plot
+    # Adiciona uma grade ao gráfico
     plt.grid(True)
-    # Show the plot
+    # Mostra o gráfico
     plt.show()
 
-    # Pause briefly to allow the plot to be rendered
+    # Pausa brevemente para permitir que o gráfico seja renderizado
     time.sleep(0.05)
-
-    
