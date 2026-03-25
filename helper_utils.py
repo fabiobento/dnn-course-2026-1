@@ -5,80 +5,80 @@ import matplotlib.pyplot as plt
 
 def plot_results(model, distances, times):
     """
-    Plots the actual data points and the model's predicted line for a given dataset.
+    Plota os pontos de dados reais e a linha prevista pelo modelo para um determinado conjunto de dados.
 
-    Args:
-        model: The trained machine learning model to use for predictions.
-        distances: The input data points (features) for the model.
-        times: The target data points (labels) for the plot.
+    Argumentos:
+        model: O modelo de aprendizado de máquina treinado a ser usado para previsões.
+        distances: Os pontos de dados de entrada (features) para o modelo.
+        times: Os pontos de dados alvo (labels) para o gráfico.
     """
-    # Set the model to evaluation mode
+    # Define o modelo para o modo de avaliação
     model.eval()
 
-    # Disable gradient calculation for efficient inference
+    # Desativa o cálculo de gradiente para inferência eficiente
     with torch.no_grad():
-        # Make predictions using the trained model
+        # Faz previsões usando o modelo treinado
         predicted_times = model(distances)
 
-    # Create a new figure for the plot
+    # Cria uma nova figura para o gráfico
     plt.figure(figsize=(8, 6))
     
-    # Plot the actual data points
-    plt.plot(distances.numpy(), times.numpy(), color='orange', marker='o', linestyle='None', label='Actual Delivery Times')
+    # Plota os pontos de dados reais
+    plt.plot(distances.numpy(), times.numpy(), color='orange', marker='o', linestyle='None', label='Tempos de Entrega Reais')
     
-    # Plot the predicted line from the model
-    plt.plot(distances.numpy(), predicted_times.numpy(), color='green', marker='None', label='Predicted Line')
+    # Plota a linha prevista pelo modelo
+    plt.plot(distances.numpy(), predicted_times.numpy(), color='green', marker='None', label='Linha Prevista')
     
-    # Set the title of the plot
-    plt.title('Actual vs. Predicted Delivery Times')
-    # Set the x-axis label
-    plt.xlabel('Distance (miles)')
-    # Set the y-axis label
-    plt.ylabel('Time (minutes)')
-    # Display the legend
+    # Define o título do gráfico
+    plt.title('Tempos de Entrega: Real vs. Previsto')
+    # Define o rótulo do eixo x
+    plt.xlabel('Distância (milhas)')
+    # Define o rótulo do eixo y
+    plt.ylabel('Tempo (minutos)')
+    # Exibe a legenda
     plt.legend()
-    # Add a grid to the plot
+    # Adiciona uma grade ao gráfico
     plt.grid(True)
-    # Show the plot
+    # Mostra o gráfico
     plt.show()
 
     
 
 def plot_nonlinear_comparison(model, new_distances, new_times):
     """
-    Compares and plots the predictions of a model against new, non-linear data.
+    Compara e plota as previsões de um modelo em relação a novos dados não lineares.
 
-    Args:
-        model: The trained model to be evaluated.
-        new_distances: The new input data for generating predictions.
-        new_times: The actual target values for comparison.
+    Argumentos:
+        model: O modelo treinado a ser avaliado.
+        new_distances: Os novos dados de entrada para gerar previsões.
+        new_times: Os valores alvo reais para comparação.
     """
-    # Set the model to evaluation mode
+    # Define o modelo para o modo de avaliação
     model.eval()
     
-    # Disable gradient computation for inference
+    # Desativa o cálculo de gradiente para inferência
     with torch.no_grad():
-        # Generate predictions using the model
+        # Gera previsões usando o modelo
         predictions = model(new_distances)
 
-    # Create a new figure for the plot
+    # Cria uma nova figura para o gráfico
     plt.figure(figsize=(8, 6))
     
-    # Plot the actual data points
-    plt.plot(new_distances.numpy(), new_times.numpy(), color='orange', marker='o', linestyle='None', label='Actual Data (Bikes & Cars)')
+    # Plota os pontos de dados reais
+    plt.plot(new_distances.numpy(), new_times.numpy(), color='orange', marker='o', linestyle='None', label='Dados Reais (Bicicletas e Carros)')
     
-    # Plot the predictions from the model
-    plt.plot(new_distances.numpy(), predictions.numpy(), color='green', marker='None', label='Linear Model Predictions')
+    # Plota as previsões do modelo
+    plt.plot(new_distances.numpy(), predictions.numpy(), color='green', marker='None', label='Previsões do Modelo Linear')
     
-    # Set the title of the plot
-    plt.title('Linear Model vs. Non-Linear Reality')
-    # Set the label for the x-axis
-    plt.xlabel('Distance (miles)')
-    # Set the label for the y-axis
-    plt.ylabel('Time (minutes)')
-    # Add a legend to the plot
+    # Define o título do gráfico
+    plt.title('Modelo Linear vs. Realidade Não Linear')
+    # Define o rótulo do eixo x
+    plt.xlabel('Distância (milhas)')
+    # Define o rótulo do eixo y
+    plt.ylabel('Tempo (minutos)')
+    # Adiciona uma legenda ao gráfico
     plt.legend()
-    # Add a grid to the plot for better readability
+    # Adiciona uma grade ao gráfico para melhor legibilidade
     plt.grid(True)
-    # Display the plot
+    # Mostra o gráfico
     plt.show()
