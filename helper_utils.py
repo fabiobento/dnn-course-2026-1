@@ -1,8 +1,6 @@
 import torch
 import matplotlib.pyplot as plt
 
-
-
 def plot_results(model, distances, times):
     """
     Plota os pontos de dados reais e a linha prevista pelo modelo para um determinado conjunto de dados.
@@ -12,37 +10,35 @@ def plot_results(model, distances, times):
         distances: Os pontos de dados de entrada (features) para o modelo.
         times: Os pontos de dados alvo (labels) para o gráfico.
     """
-    # Define o modelo para o modo de avaliação
+    # Define o modelo para o modo de avaliação (importante para consistência nas previsões)
     model.eval()
 
-    # Desativa o cálculo de gradiente para inferência eficiente
+    # Desativa o cálculo de gradiente para economizar memória e acelerar a inferência
     with torch.no_grad():
-        # Faz previsões usando o modelo treinado
+        # Gera as previsões (y_pred) com base nas distâncias fornecidas
         predicted_times = model(distances)
 
-    # Cria uma nova figura para o gráfico
+    # Cria a janela do gráfico com um tamanho definido
     plt.figure(figsize=(8, 6))
     
-    # Plota os pontos de dados reais
+    # Plota os dados reais como pontos (scatter plot manual usando linestyle='None')
+    # Convertemos os tensores do PyTorch para arrays NumPy para que o Matplotlib possa processá-los
     plt.plot(distances.numpy(), times.numpy(), color='orange', marker='o', linestyle='None', label='Tempos de Entrega Reais')
     
-    # Plota a linha prevista pelo modelo
+    # Plota a linha de tendência que o modelo aprendeu
     plt.plot(distances.numpy(), predicted_times.numpy(), color='green', marker='None', label='Linha Prevista')
     
-    # Define o título do gráfico
+    # Configurações de rótulos e títulos
     plt.title('Tempos de Entrega: Real vs. Previsto')
-    # Define o rótulo do eixo x
     plt.xlabel('Distância (milhas)')
-    # Define o rótulo do eixo y
     plt.ylabel('Tempo (minutos)')
-    # Exibe a legenda
-    plt.legend()
-    # Adiciona uma grade ao gráfico
-    plt.grid(True)
-    # Mostra o gráfico
-    plt.show()
-
     
+    # Adiciona a legenda baseada nos 'labels' definidos acima
+    plt.legend()
+    # Ativa as linhas de grade para facilitar a leitura dos valores
+    plt.grid(True)
+    # Exibe o gráfico finalizado
+    plt.show()
 
 def plot_nonlinear_comparison(model, new_distances, new_times):
     """
@@ -53,32 +49,27 @@ def plot_nonlinear_comparison(model, new_distances, new_times):
         new_distances: Os novos dados de entrada para gerar previsões.
         new_times: Os valores alvo reais para comparação.
     """
-    # Define o modelo para o modo de avaliação
+    # Coloca o modelo em modo de avaliação
     model.eval()
     
-    # Desativa o cálculo de gradiente para inferência
+    # Bloco que garante que os pesos do modelo não sejam alterados durante a visualização
     with torch.no_grad():
-        # Gera previsões usando o modelo
+        # Obtém as previsões do modelo para os novos dados
         predictions = model(new_distances)
 
-    # Cria uma nova figura para o gráfico
     plt.figure(figsize=(8, 6))
     
-    # Plota os pontos de dados reais
+    # Plota os novos dados que possuem comportamento não linear (ex: diferentes veículos)
     plt.plot(new_distances.numpy(), new_times.numpy(), color='orange', marker='o', linestyle='None', label='Dados Reais (Bicicletas e Carros)')
     
-    # Plota as previsões do modelo
+    # Plota a linha de previsão para mostrar como o modelo linear tenta se ajustar a dados curvos
     plt.plot(new_distances.numpy(), predictions.numpy(), color='green', marker='None', label='Previsões do Modelo Linear')
     
-    # Define o título do gráfico
+    # Títulos e legendas
     plt.title('Modelo Linear vs. Realidade Não Linear')
-    # Define o rótulo do eixo x
     plt.xlabel('Distância (milhas)')
-    # Define o rótulo do eixo y
     plt.ylabel('Tempo (minutos)')
-    # Adiciona uma legenda ao gráfico
+    
     plt.legend()
-    # Adiciona uma grade ao gráfico para melhor legibilidade
     plt.grid(True)
-    # Mostra o gráfico
     plt.show()
