@@ -6,3 +6,4 @@ __pycache__
 *SOLUTION.ipynb
 .vscode
 data/*
+EMNIST_data
