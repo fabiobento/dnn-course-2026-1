@@ -8,7 +8,7 @@ from PIL import Image
 
 def display_image(image, label, title, num_ticks=6, show_values=True):
     """
-    Exibe uma imagem com seu respectivo rótulo e título.
+    Exibe a imagem com seu respectivo rótulo e título.
 
     Esta função lida com diferentes formatos de imagem (PIL Image e PyTorch Tensor),
     normaliza o intervalo de exibição e, opcionalmente, sobrepõe os valores numéricos 
