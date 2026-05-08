@@ -5,27 +5,34 @@ set -e
 
 echo "Preparando a instalação das dependências..."
 
-# Cria um ambiente virtual chamado "venv" se ele não existir
+# 1. Cria um ambiente virtual chamado "venv" se ele não existir
 if [ ! -d "venv" ]; then
     echo "Criando o ambiente virtual 'venv'..."
     python3 -m venv venv
 fi
 
-# Ativa o ambiente virtual
+# 2. Ativa o ambiente virtual
 echo "Ativando o ambiente virtual..."
 source venv/bin/activate
 
-# Atualizando o pip dentro do ambiente virtual
+# 3. Atualizando o pip dentro do ambiente virtual
 echo "Atualizando o pip..."
 pip install --upgrade pip
 
-# Instalando dependências
-echo "Instalando os pacotes necessários..."
-pip install -r requirements.txt
+# 4. Instalando dependências
+if [ -f "requirements.txt" ]; then
+    echo "Instalando os pacotes necessários do requirements.txt..."
+    pip install -r requirements.txt
+else
+    echo "ERRO: Arquivo requirements.txt não encontrado!"
+    exit 1
+fi
 
 echo ""
 echo "============================================================"
 echo "Instalação concluída com sucesso no ambiente virtual!"
+echo "As bibliotecas PyTorch, Torchvision e utilitários estão prontas."
+echo ""
 echo "Para abrir os notebooks, você precisa ATIVAR o ambiente"
 echo "virtual primeiro. Para fazer isso, execute:"
 echo ""

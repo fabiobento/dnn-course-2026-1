@@ -1,8 +1,12 @@
+# Bibliotecas base de análise de dados e notebooks
 jupyter
 numpy
 matplotlib
 pandas
 scipy
 scikit-learn
-torch
 packaging
+
+# Bibliotecas de Deep Learning (Requisitos solicitados)
+torch
+torchvision
