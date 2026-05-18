@@ -53,7 +53,7 @@ def update_dataloader_bar(p_bar, batch, current_bs, n_samples):
     # Avança a barra de progresso pelo número de itens no lote atual.
     p_bar.update(current_bs)
     # Define a descrição para mostrar o número do lote atual.
-    p_bar.set_description(f"Batch {batch+1}")
+    p_bar.set_description(f"Lote {batch+1}")
 
     # Verifica se o lote atual é o último.
     if (batch + 1) * current_bs > n_samples:
@@ -99,7 +99,7 @@ def plot_img(img, label=None, info=None, ax=None):
     # Verifica se um rótulo foi fornecido para determinar como exibir la imagem.
     if label:
         # Cria uma string de título com o rótulo fornecido.
-        title = f"Label: {label}"
+        title = f"Rótulo: {label}"
         # Exibe a imagem com o título gerado.
         show_titled_image((img, title), ax=ax)
     else:
@@ -207,10 +207,10 @@ def quick_debug(img):
         img (torch.Tensor): O tensor de imagem a ser inspecionado.
     """
     # Imprime o formato (shape) do tensor de imagem.
-    print(f"Shape: {img.shape}")  # Deve ser [3, 224, 224]
+    print(f"Formato: {img.shape}")  # Deve ser [3, 224, 224]
     # Imprime o tipo de dado do tensor.
-    print(f"Type: {img.dtype}")  # Deve ser torch.float32
+    print(f"Tipo: {img.dtype}")  # Deve ser torch.float32
     # Imprime os valores mínimo e máximo de pixel no tensor.
     print(
-        f"Range of pixel values: [{img.min():.1f}, {img.max():.1f}]"
+        f"Intervalo de valores de pixel: [{img.min():.1f}, {img.max():.1f}]"
     )
