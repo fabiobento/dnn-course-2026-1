@@ -1,12 +1,15 @@
 # Bibliotecas base de análise de dados e notebooks
-jupyter
-numpy
-matplotlib
-pandas
-scipy
-scikit-learn
-packaging
+jupyter       # Ambiente interativo para desenvolvimento e testes
+numpy         # Biblioteca fundamental para computação científica e manipulação de arrays
+matplotlib    # Biblioteca para criação de gráficos e visualização de dados
+pandas        # Ferramenta para manipulação e análise de estruturas de dados
+scipy         # Biblioteca para matemática, ciência e engenharia
+scikit-learn  # Ferramentas simples e eficientes para aprendizado de máquina
+packaging     # Utilitários para empacotamento e distribuição de projetos Python
 
 # Bibliotecas de Deep Learning (Requisitos solicitados)
-torch
-torchvision
+torch         # PyTorch, framework principal para Deep Learning
+torchvision   # Modelos e transformações para visão computacional
+
+# Ferramentas auxiliares
+gdown         # Utilitário para download de arquivos e pastas do Google Drive
