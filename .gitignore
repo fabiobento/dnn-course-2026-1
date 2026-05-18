@@ -7,3 +7,4 @@ __pycache__
 .vscode
 data/*
 EMNIST_data
+flower_data.tar.gz
