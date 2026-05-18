@@ -8,3 +8,5 @@ __pycache__
 data/*
 EMNIST_data
 flower_data.tar.gz
+flower_data
+corrupted_flower_data

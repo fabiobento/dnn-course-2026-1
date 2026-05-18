@@ -13,3 +13,7 @@ torchvision   # Modelos e transformações para visão computacional
 
 # Ferramentas auxiliares
 gdown         # Utilitário para download de arquivos e pastas do Google Drive
+directory_tree
+
+
+fastai
