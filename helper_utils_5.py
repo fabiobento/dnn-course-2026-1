@@ -9,109 +9,109 @@ from tqdm.auto import tqdm
 
 def get_dataloader_bar(dataloader, color="green"):
     """
-    Creates and configures a progress bar for a given dataloader.
+    Cria e configura uma barra de progresso para um dado dataloader.
 
     Args:
-        dataloader (torch.utils.data.DataLoader): The dataloader providing the dataset.
-        color (str): The color of the progress bar.
+        dataloader (torch.utils.data.DataLoader): O dataloader que fornece o dataset.
+        color (str): A cor da barra de progresso.
 
     Returns:
-        pbar (tqdm.tqdm): The configured progress bar object.
+        pbar (tqdm.tqdm): O objeto da barra de progresso configurado.
     """
-    # Get the total number of samples from the dataloader's dataset.
+    # Obtém o número total de amostras a partir do dataset do dataloader.
     num_samples = len(dataloader.dataset)
 
-    # Initialize a tqdm progress bar with specified settings.
+    # Inicializa uma barra de progresso tqdm com as configurações especificadas.
     pbar = tqdm(
-        # Set the total number of iterations for the bar.
+        # Define o número total de iterações para a barra.
         total=num_samples,
-        # Dynamically calculate the width of the progress bar.
+        # Calcula dinamicamente a largura da barra de progresso.
         ncols=int(num_samples / 10) + 300,
-        # Define the format string for the progress bar's appearance.
+        # Define a string de formato para a aparência da barra de progresso.
         bar_format="{desc} {bar} {postfix}",
-        # Direct the progress bar output to the standard output stream.
+        # Direciona a saída da barra de progresso para o fluxo de saída padrão (stdout).
         file=sys.stdout,
-        # Set the color of the progress bar.
+        # Define a cor da barra de progresso.
         colour=color,
     )
 
-    # Return the configured progress bar object.
+    # Retorna o objeto da barra de progresso configurado.
     return pbar
 
 
 
 def update_dataloader_bar(p_bar, batch, current_bs, n_samples):
     """
-    Updates the existing progress bar with the current batch information.
+    Atualiza a barra de progresso existente com as informações do lote (batch) atual.
 
     Args:
-        p_bar (tqdm.tqdm): The progress bar object to update.
-        batch (int): The current batch index.
-        current_bs (int): The size of the current batch.
-        n_samples (int): The total number of samples in the dataset.
+        p_bar (tqdm.tqdm): O objeto da barra de progresso a ser atualizado.
+        batch (int): O índice do lote atual.
+        current_bs (int): O tamanho do lote atual (batch size).
+        n_samples (int): O número total de amostras no dataset.
     """
-    # Advance the progress bar by the number of items in the current batch.
+    # Avança a barra de progresso pelo número de itens no lote atual.
     p_bar.update(current_bs)
-    # Set the description to show the current batch number.
+    # Define a descrição para mostrar o número do lote atual.
     p_bar.set_description(f"Batch {batch+1}")
 
-    # Check if the current batch is the last one.
+    # Verifica se o lote atual é o último.
     if (batch + 1) * current_bs > n_samples:
-        # Update the postfix to show the total number of samples processed.
-        p_bar.set_postfix_str(f"{n_samples} of a total of  {n_samples} samples")
+        # Atualiza o sufixo para mostrar o número total de amostras processadas.
+        p_bar.set_postfix_str(f"{n_samples} de um total de  {n_samples} amostras")
     else:
-        # Update the postfix to show the cumulative number of samples processed.
+        # Atualiza o sufixo para mostrar o número cumulativo de amostras processadas.
         p_bar.set_postfix_str(
-            f"{current_bs*(batch+1)} of a total of  {n_samples} samples"
+            f"{current_bs*(batch+1)} de um total de  {n_samples} amostras"
         )
 
 
 
 def plot_img(img, label=None, info=None, ax=None):
     """
-    Plots an image with optional labels and supplementary information.
+    Plota uma imagem com rótulos opcionais e informações suplementares.
 
     Args:
-        img (torch.Tensor or numpy.ndarray): The image data to plot.
-        label (str): Optional label to display as the title.
-        info (str): Optional supplementary text to display below the image.
-        ax (matplotlib.axes.Axes): Optional matplotlib axes to plot on.
+        img (torch.Tensor ou numpy.ndarray): Os dados da imagem a serem plotados.
+        label (str): Rótulo opcional para exibir como o título.
+        info (str): Texto suplementar opcional para exibir abaixo da imagem.
+        ax (matplotlib.axes.Axes): Eixos opcionais do matplotlib para plotar.
     """
     def add_info_text(ax, info):
         """
-        Adds supplementary text below the plot on a given axes.
+        Adiciona texto suplementar abaixo do gráfico em um determinado eixo.
 
         Args:
-            ax (matplotlib.axes.Axes): The matplotlib axes object.
-            info (str): The text to be added.
+            ax (matplotlib.axes.Axes): O objeto de eixos do matplotlib.
+            info (str): O texto a ser adicionado.
         """
-        # Add text to the axes at a specified position.
+        # Adiciona texto aos eixos em uma posição especificada.
         ax.text(
             0.5, -0.1, info, transform=ax.transAxes, ha="center", va="top", fontsize=10
         )
-        # Set the x-axis label position to the top.
+        # Define a posição do rótulo do eixo X para o topo.
         ax.xaxis.set_label_position("top")
 
-    # Create a new figure and axes if none are provided.
+    # Cria uma nova figura e eixos se nenhum for fornecido.
     if ax is None:
         fig, ax = plt.subplots(figsize=(5, 5))
 
-    # Check if a label is provided to determine how to display the image.
+    # Verifica se um rótulo foi fornecido para determinar como exibir la imagem.
     if label:
-        # Create a title string with the provided label.
+        # Cria uma string de título com o rótulo fornecido.
         title = f"Label: {label}"
-        # Display the image with the generated title.
+        # Exibe a imagem com o título gerado.
         show_titled_image((img, title), ax=ax)
     else:
-        # Display the image without a title.
+        # Exibe a imagem sem um título.
         show_image(img, ax=ax)
 
-    # Check if supplementary information is provided.
+    # Verifica se informações suplementares foram fornecidas.
     if info:
-        # Add the information as text below the image.
+        # Adiciona a informação como texto abaixo da imagem.
         add_info_text(ax, info)
 
-    # If no axes were passed in, display the newly created plot.
+    # Se nenhum eixo foi passado, exibe o gráfico recém-criado.
     if ax is None:
         plt.show()
 
@@ -119,98 +119,98 @@ def plot_img(img, label=None, info=None, ax=None):
 
 def get_grid(num_rows, num_cols, figsize=(16, 8)):
     """
-    Creates a grid of subplots and ensures the axes object is consistently formatted.
+    Cria uma grade de subplots e garante que o objeto de eixos seja formatado de forma consistente.
 
     Args:
-        num_rows (int): The number of rows in the subplot grid.
-        num_cols (int): The number of columns in the subplot grid.
-        figsize (tuple): The dimensions of the overall figure.
+        num_rows (int): O número de linhas na grade de subplots.
+        num_cols (int): O número de colunas na grade de subplots.
+        figsize (tuple): As dimensões da figura geral.
 
     Returns:
-        fig (matplotlib.figure.Figure): The generated matplotlib figure object.
-        axes (list): The formatted axes grid, structured as an iterable or 2D list.
+        fig (matplotlib.figure.Figure): O objeto da figura do matplotlib gerado.
+        axes (list): A grade de eixos formatada, estruturada como um iterável ou lista 2D.
     """
-    # Create a figure and a set of subplots.
+    # Cria uma figura e um conjunto de subplots.
     fig, axes = plt.subplots(num_rows, num_cols, figsize=figsize)
 
-    # Handle the case where there is only one row.
+    # Trata o caso onde há apenas uma linha.
     if num_rows == 1:
-        # Ensure the axes object is iterable for consistency.
+        # Garante que o objeto de eixos seja iterável para consistência.
         axes = [axes]
-    # Handle the case where there is only one column.
+    # Trata o caso onde há apenas uma coluna.
     elif num_cols == 1:
-        # Ensure the axes object is a 2D list for consistent indexing.
+        # Garante que o objeto de eixos seja uma lista 2D para indexação consistente.
         axes = [[ax] for ax in axes]
         
-    # Return the figure and the formatted axes grid.
+    # Retorna a figura e a grade de eixos formatada.
     return fig, axes
 
 
 
 def print_data_folder_structure(root_dir, max_depth=1):
     """
-    Prints the directory tree structure for a given root directory.
+    Imprime a estrutura de árvore de diretórios para um determinado diretório raiz.
 
     Args:
-        root_dir (str): The starting path for the directory tree.
-        max_depth (int): The maximum depth for the tree traversal.
+        root_dir (str): O caminho inicial para a árvore de diretórios.
+        max_depth (int): A profundidade máxima para a varredura da árvore.
     """
-    # Define the configuration settings for displaying the directory tree.
+    # Define as configurações para exibir a árvore de diretórios.
     config_tree = {
-        # Specify the starting path for the directory tree.
+        # Especifica o caminho inicial para a árvore de diretórios.
         "dirPath": root_dir,
-        # Set to False to include both files and directories.
+        # Define como False para incluir tanto arquivos quanto diretórios.
         "onlyDirs": False,
-        # Set the maximum depth for the tree traversal.
+        # Define a profundidade máxima para a varredura da árvore.
         "maxDepth": max_depth,
-        # Specify a sorting option (100 typically means no specific sort).
+        # Especifica uma opção de ordenação (100 normalmente significa sem ordenação específica).
         "sortBy": 100,
     }
-    # Create and display the tree structure using the unpacked configuration.
+    # Cria e exibe a estrutura da árvore usando a configuração descompactada.
     DisplayTree(**config_tree)
 
 
 def explore_extensions(root_dir):
     """
-    Explores a directory tree to group all file paths by their file extensions.
+    Explora uma árvore de diretórios para agrupar todos os caminhos de arquivos por suas extensões.
 
     Args:
-        root_dir (str): The starting directory path to search.
+        root_dir (str): O caminho do diretório inicial para a busca.
 
     Returns:
-        extensions (dict): A dictionary mapping file extensions to a list of matching file paths.
+        extensions (dict): Um dicionário mapeando extensões de arquivos para uma lista de caminhos correspondentes.
     """
-    # Initialize a dictionary to store file paths, grouped by extension.
+    # Inicializa um dicionário para armazenar os caminhos dos arquivos, agrupados por extensão.
     extensions = {}
-    # Walk through the directory tree starting from the root directory.
+    # Percorre a árvore de diretórios começando a partir do diretório raiz.
     for dirpath, _, filenames in os.walk(root_dir):
-        # Iterate over each file in the current directory.
+        # Itera sobre cada arquivo no diretório atual.
         for filename in filenames:
-            # Extract the file extension and convert it to lowercase.
+            # Extrai a extensão do arquivo e a converte para minúsculas.
             ext = os.path.splitext(filename)[1].lower()
-            # If the extension has not been seen before, add it to the dictionary.
+            # Se a extensão ainda não foi vista antes, adiciona-a ao dicionário.
             if ext not in extensions:
-                # Initialize a new list for this extension.
+                # Inicializa uma nova lista para esta extensão.
                 extensions[ext] = []
-            # Append the full path of the file to the list for its extension.
+            # Adiciona o caminho completo do arquivo à lista da sua respectiva extensão.
             extensions[ext].append(os.path.join(dirpath, filename))
-    # Return the dictionary of extensions and their corresponding file paths.
+    # Retorna o dicionário de extensões e seus caminhos de arquivo correspondentes.
     return extensions
 
 
 
 def quick_debug(img):
     """
-    Prints basic debugging information about an image tensor.
+    Imprime informações básicas de depuração (debug) sobre um tensor de imagem.
 
     Args:
-        img (torch.Tensor): The image tensor to inspect.
+        img (torch.Tensor): O tensor de imagem a ser inspecionado.
     """
-    # Print the shape of the image tensor.
-    print(f"Shape: {img.shape}")  # Should be [3, 224, 224]
-    # Print the data type of the tensor.
-    print(f"Type: {img.dtype}")  # Should be torch.float32
-    # Print the minimum and maximum pixel values in the tensor.
+    # Imprime o formato (shape) do tensor de imagem.
+    print(f"Shape: {img.shape}")  # Deve ser [3, 224, 224]
+    # Imprime o tipo de dado do tensor.
+    print(f"Type: {img.dtype}")  # Deve ser torch.float32
+    # Imprime os valores mínimo e máximo de pixel no tensor.
     print(
         f"Range of pixel values: [{img.min():.1f}, {img.max():.1f}]"
     )
