@@ -1,3 +1,6 @@
+Aqui está o código completo com as *docstrings*, funções internas e todos os comentários traduzidos e adaptados para o português brasileiro, mantendo a exata estrutura e lógica do seu código original:
+
+```python
 import itertools
 import os
 import random
@@ -12,36 +15,35 @@ import torchvision
 from torch.utils.data import DataLoader, TensorDataset
 
 
-
 def load_cifar100_subset(target_classes, train_transform, val_transform, root='./cifar_100'):
     """
-    Loads and filters the CIFAR-100 dataset to include only specified target classes.
+    Carrega e filtra o dataset CIFAR-100 para incluir apenas as classes-alvo especificadas.
 
-    This function first checks for a local copy of the CIFAR-100 dataset and
-    downloads it if not found. It then filters both the training and test sets
-    to retain only the images and labels corresponding to the classes specified
-    in `target_classes`. The labels are remapped to be contiguous from 0.
+    Esta função primeiro verifica se existe uma cópia local do dataset CIFAR-100 e
+    realiza o download caso não seja encontrado. Em seguida, filtra os conjuntos de
+    treino e teste para reter apenas as imagens e rótulos correspondentes às classes
+    especificadas em `target_classes`. Os rótulos são remapeados para serem contíguos a partir de 0.
 
     Args:
-        target_classes: A list of class name strings to be included in the dataset subset.
-        train_transform: A torchvision transform to be applied to the training dataset images.
-        val_transform: A torchvision transform to be applied to the test/val dataset images.
-        root: The root directory where the dataset is stored or will be downloaded.
+        target_classes: Uma lista de strings com os nomes das classes a serem incluídas no subconjunto.
+        train_transform: Uma transformação do torchvision para ser aplicada às imagens de treino.
+        val_transform: Uma transformação do torchvision para ser aplicada às imagens de teste/validação.
+        root: O diretório raiz onde o dataset está armazenado ou será baixado.
 
     Returns:
-        A tuple containing the filtered training dataset and the filtered test dataset.
-        Returns (None, None) if a specified target class is not found.
+        Uma tupla contendo o dataset de treino filtrado e o dataset de teste filtrado.
+        Retorna (None, None) se uma classe-alvo especificada não for encontrada.
     """
-    # Construct the path to the CIFAR-100 dataset directory.
+    # Constrói o caminho para o diretório do dataset CIFAR-100.
     cifar100_path = os.path.join(root, 'cifar-100-python')
-    # Check if the dataset directory exists locally.
+    # Verifica se o diretório do dataset existe localmente.
     if os.path.isdir(cifar100_path):
-        print(f"Dataset found in '{root}'. Loading from local files.")
-    # If not found, inform the user that it will be downloaded.
+        print(f"Dataset encontrado em '{root}'. Carregando dos arquivos locais.")
+    # Se não for encontrado, informa ao usuário que o download será realizado.
     else:
-        print(f"Dataset not found in '{root}'. Downloading...")
+        print(f"Dataset não encontrado em '{root}'. Baixando...")
 
-    # Load the full CIFAR-100 training dataset.
+    # Carrega o dataset completo de treino do CIFAR-100.
     train_dataset_full = torchvision.datasets.CIFAR100(
         root=root, 
         train=True, 
@@ -49,252 +51,249 @@ def load_cifar100_subset(target_classes, train_transform, val_transform, root='.
         transform=train_transform
     )
 
-    # Load the full CIFAR-100 test dataset.
+    # Carrega o dataset completo de teste do CIFAR-100.
     test_dataset_full = torchvision.datasets.CIFAR100(
         root=root, 
         train=False, 
         download=True, 
         transform=val_transform
     )
-    print("Dataset loaded successfully.")
+    print("Dataset carregado com sucesso.")
 
-    # Get the list of all class names from the dataset.
+    # Obtém a lista de todos os nomes das classes do dataset.
     all_classes = train_dataset_full.classes
     try:
-        # Get the original integer indices for the target class names.
+        # Obtém os índices inteiros originais para os nomes das classes-alvo.
         target_indices = [all_classes.index(cls) for cls in target_classes]
-    # Handle the case where a specified class name is not in the dataset.
+    # Trata o caso onde um nome de classe especificado não existe no dataset.
     except ValueError as e:
-        print(f"Error: One of the target classes not found in CIFAR-100. {e}")
+        print(f"Erro: Uma das classes-alvo não foi encontrada no CIFAR-100. {e}")
         return None, None
         
-    # Create a mapping from the original class indices to new, contiguous indices (0, 1, 2, ...).
+    # Cria um mapeamento dos índices originais das classes para novos índices contíguos (0, 1, 2, ...).
     label_map = {old_label: new_label for new_label, old_label in enumerate(target_indices)}
 
-    # Define a helper function to filter a dataset based on the target classes.
+    # Define uma função auxiliar para filtrar um dataset com base nas classes-alvo.
     def _filter_dataset(dataset):
-        # Convert the list of targets to a NumPy array for efficient boolean indexing.
+        # Converte a lista de alvos em um array NumPy para indexação booleana eficiente.
         targets_np = np.array(dataset.targets)
-        # Create a boolean mask to identify which samples belong to the target classes.
+        # Cria uma máscara booleana para identificar quais amostras pertencem às classes-alvo.
         indices_to_keep = np.isin(targets_np, target_indices)
         
-        # Filter the dataset's image data using the boolean mask.
+        # Filtra os dados de imagem do dataset usando a máscara booleana.
         dataset.data = dataset.data[indices_to_keep]
         
-        # Get the original labels of the samples that are being kept.
+        # Obtém os rótulos originais das amostras que serão mantidas.
         original_targets_to_keep = targets_np[indices_to_keep]
-        # Remap the original labels to the new contiguous labels.
+        # Remapeia os rótulos originais para os novos rótulos contíguos.
         dataset.targets = [label_map[target] for target in original_targets_to_keep]
         
         # Update the dataset's class list to only include the target classes.
         dataset.classes = target_classes
         return dataset
 
-    print(f"\nFiltering for {len(target_classes)} classes...")
-    # Apply the filtering logic to the full training dataset.
+    print(f"\nFiltrando para {len(target_classes)} classes...")
+    # Aplica a lógica de filtragem ao dataset de treino completo.
     train_dataset_subset = _filter_dataset(train_dataset_full)
-    # Apply the filtering logic to the full test dataset.
+    # Aplica a lógica de filtragem ao dataset de teste completo.
     test_dataset_subset = _filter_dataset(test_dataset_full)
-    print("Filtering complete. Returning training and validation datasets.")
+    print("Filtragem concluída. Retornando os datasets de treino e validação.")
     
-    # Return the filtered training and test subsets.
+    # Retorna os subconjuntos filtrados de treino e teste.
     return train_dataset_subset, test_dataset_subset
-
 
 
 def visualise_images(loader, grid):
     """
-    Visualizes a grid of random images from a dataset, showing one image per class.
+    Visualiza uma grade de imagens aleatórias de um dataset, mostrando uma imagem por classe.
 
     Args:
-        loader: The DataLoader object containing the dataset.
-        grid: A tuple specifying the grid dimensions as (rows, cols).
+        loader: O objeto DataLoader contendo o dataset.
+        grid: Uma tupla especificando as dimensões da grade como (linhas, colunas).
     """
-    # Unpack the grid dimensions from the input tuple
+    # Desempacota as dimensões da grade a partir da tupla de entrada
     rows, cols = grid
-    # Calculate the total number of images to display in the grid
+    # Calcula o número total de imagens a serem exibidas na grade
     num_images_to_show = rows * cols
 
-    # Get the dataset object from the DataLoader
+    # Obtém o objeto do dataset a partir do DataLoader
     dataset_to_show = loader.dataset
 
-    # Create a dictionary to store lists of indices for each class
+    # Cria um dicionário para armazenar listas de índices para cada classe
     class_indices = defaultdict(list)
-    # Iterate through the dataset to populate the class_indices dictionary
+    # Itera pelo dataset para preencher o dicionário class_indices
     for idx, target in enumerate(dataset_to_show.targets):
         class_indices[target].append(idx)
         
-    # Get the list of class names from the dataset
+    # Obtém a lista de nomes das classes do dataset
     class_names = dataset_to_show.classes
 
-    # Create a figure and a set of subplots for the grid layout
+    # Cria uma figura e um conjunto de subplots para o layout da grade
     fig, axes = plt.subplots(rows, cols, figsize=(cols * 2, rows * 2))
 
-    # Iterate over each subplot in the grid
+    # Itera sobre cada subplot na grade
     for i, ax in enumerate(axes.flat):
-        # If the current index is out of bounds, turn off the subplot axis
+        # Se o índice atual estiver fora dos limites, desativa o eixo do subplot
         if i >= num_images_to_show or i >= len(class_names):
             ax.axis('off')
             continue
             
-        # Set the class label based on the current iteration index
+        # Define o rótulo da classe com base no índice da iteração atual
         class_label = i
         
-        # Get the list of image indices for the current class
+        # Obtém a lista de índices de imagem para a classe atual
         indices_for_class = class_indices[class_label]
-        # If there are no images for this class, turn off the subplot axis
+        # Se não houver imagens para esta classe, desativa o eixo do subplot
         if not indices_for_class:
             ax.axis('off')
             continue
 
-        # Choose a random image index from the list for the current class
+        # Escolhe um índice de imagem aleatório da lista para a classe atual
         random_image_index = random.choice(indices_for_class)
         
-        # Retrieve the image tensor and its corresponding label from the dataset
+        # Recupera o tensor da imagem e seu rótulo correspondente do dataset
         image_tensor, _ = dataset_to_show[random_image_index]
         
-        # Convert the tensor to a NumPy array and transpose dimensions for display
+        # Converte o tensor em um array NumPy e transpõe as dimensões para exibição (H, W, C)
         img_to_display = image_tensor.numpy().transpose((1, 2, 0))
         
-        # Rescale the pixel values from the normalized range to [0, 1] for proper visualization
+        # Redimensiona os valores dos pixels do intervalo normalizado para [0, 1] para visualização correta
         min_val = img_to_display.min()
         max_val = img_to_display.max()
         img_to_display = (img_to_display - min_val) / (max_val - min_val)
         
-        # Get the name of the class corresponding to the class label
+        # Obtém o nome da classe correspondente ao rótulo da classe
         class_name = class_names[class_label]
         
-        # Display the image on the current subplot
+        # Exibe a imagem no subplot atual
         ax.imshow(img_to_display)
         
-        # Set the title of the subplot to the capitalized class name
+        # Define o título do subplot com o nome da classe capitalizado
         ax.set_title(class_name.capitalize(), fontsize=16)
-        # Turn off the axis for a cleaner look
+        # Desativa os eixos para uma aparência mais limpa
         ax.axis('off')
 
-    # Adjust subplot parameters for a tight layout
+    # Ajusta os parâmetros dos subplots para um layout compacto
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-    # Display the plot
+    # Exibe o gráfico
     plt.show()
     
     
-
 def plot_training_metrics(metrics):
     """
-    Plots the training and validation metrics from a model training process.
+    Plota as métricas de treino e validação do processo de treinamento de um modelo.
 
-    This function generates two side-by-side plots:
-    1. Training Loss vs. Validation Loss.
-    2. Validation Accuracy.
+    Esta função gera dois gráficos lado a lado:
+    1. Perda de Treino vs. Perda de Validação.
+    2. Acurácia de Validação.
 
     Args:
-        metrics (list): A list or tuple containing three lists:
+        metrics (list): Uma lista ou tupla contendo três listas:
                         [train_losses, val_losses, val_accuracies].
     """
-    # Unpack the metrics into their respective lists
+    # Desempacota as métricas em suas respectivas listas
     train_losses, val_losses, val_accuracies = metrics
     
-    # Determine the number of epochs from the length of the training losses list
+    # Determina o número de épocas a partir do tamanho da lista de perdas de treino
     num_epochs = len(train_losses)
-    # Create a 1-indexed range of epoch numbers for the x-axis
+    # Cria um intervalo indexado em 1 com os números das épocas para o eixo X
     epochs = range(1, num_epochs + 1)
 
-    # Create a figure and a set of subplots with 1 row and 2 columns
+    # Cria uma figura e um conjunto de subplots com 1 linha e 2 colunas
     fig, axes = plt.subplots(1, 2, figsize=(14, 6))
 
-    # --- Configure the first subplot for training and validation loss ---
-    # Select the first subplot
+    # --- Configura o primeiro subplot para a perda de treino e validação ---
+    # Seleciona o primeiro subplot
     ax1 = axes[0]
-    # Plot training loss data
-    ax1.plot(epochs, train_losses, color='#085c75', linewidth=2.5, marker='o', markersize=5, label='Training Loss')
-    # Plot validation loss data
-    ax1.plot(epochs, val_losses, color='#fa5f64', linewidth=2.5, marker='o', markersize=5, label='Validation Loss')
-    # Set the title and axis labels for the loss plot
-    ax1.set_title('Training & Validation Loss', fontsize=14)
-    ax1.set_xlabel('Epoch', fontsize=12)
-    ax1.set_ylabel('Loss', fontsize=12)
-    # Display the legend
+    # Plota os dados da perda de treino
+    ax1.plot(epochs, train_losses, color='#085c75', linewidth=2.5, marker='o', markersize=5, label='Perda de Treino')
+    # Plota os dados da perda de validação
+    ax1.plot(epochs, val_losses, color='#fa5f64', linewidth=2.5, marker='o', markersize=5, label='Perda de Validação')
+    # Define o título e os rótulos dos eixos para o gráfico de perda
+    ax1.set_title('Perda de Treino e Validação', fontsize=14)
+    ax1.set_xlabel('Época', fontsize=12)
+    ax1.set_ylabel('Perda', fontsize=12)
+    # Exibe a legenda
     ax1.legend()
-    # Add a grid for better readability
+    # Adiciona uma grade para melhor legibilidade
     ax1.grid(True, linestyle='--', alpha=0.6)
 
-    # --- Configure the second subplot for validation accuracy ---
-    # Select the second subplot
+    # --- Configura o segundo subplot para a acurácia de validação ---
+    # Seleciona o segundo subplot
     ax2 = axes[1]
-    # Plot validation accuracy data
-    ax2.plot(epochs, val_accuracies, color='#fa5f64', linewidth=2.5, marker='o', markersize=5, label='Validation Accuracy')
-    # Set the title and axis labels for the accuracy plot
-    ax2.set_title('Validation Accuracy', fontsize=14)
-    ax2.set_xlabel('Epoch', fontsize=12)
-    ax2.set_ylabel('Accuracy (%)', fontsize=12)
-    # Display the legend
+    # Plota os dados da acurácia de validação
+    ax2.plot(epochs, val_accuracies, color='#fa5f64', linewidth=2.5, marker='o', markersize=5, label='Acurácia de Validação')
+    # Define o título e os rótulos dos eixos para o gráfico de acurácia
+    ax2.set_title('Acurácia de Validação', fontsize=14)
+    ax2.set_xlabel('Época', fontsize=12)
+    ax2.set_ylabel('Acurácia (%)', fontsize=12)
+    # Exibe a legenda
     ax2.legend()
-    # Add a grid for better readability
+    # Adiciona uma grade para melhor legibilidade
     ax2.grid(True, linestyle='--', alpha=0.6)
     
-    # --- Apply dynamic and consistent styling to both subplots ---
-    # Calculate a suitable interval for the x-axis ticks to avoid clutter
+    # --- Aplica estilização dinâmica e consistente a ambos os subplots ---
+    # Calcula um intervalo adequado para as marcações do eixo X para evitar poluição visual
     x_interval = (num_epochs - 1) // 10 + 1
 
-    # Loop through each subplot to apply common axis settings
+    # Percorre cada subplot para aplicar as configurações comuns de eixo
     for ax in axes:
-        # Set the y-axis to start at 0 and the x-axis to span the epochs
+        # Define o eixo Y para iniciar em 0 e o eixo X para abranger as épocas
         ax.set_ylim(bottom=0)
         ax.set_xlim(left=1, right=num_epochs)
         
-        # Set the major tick locator for the x-axis using the dynamic interval
+        # Define o localizador de marcações principais para o eixo X usando o intervalo dinâmico
         ax.xaxis.set_major_locator(mticker.MultipleLocator(x_interval))
-        # Set the font size for the tick labels on both axes
+        # Define o tamanho da fonte para os rótulos das marcações em ambos os eixos
         ax.tick_params(axis='both', which='major', labelsize=10)
 
-    # Adjust subplot parameters for a tight layout
+    # Ajusta os parâmetros dos subplots para um layout compacto
     plt.tight_layout()
-    # Display the plots
+    # Exibe os gráficos
     plt.show()
-    
     
     
 def verify_training_process(model_class, train_loader, loss_function, train_epoch_fn, device):
     """
-    Verifies the training process on a small subset of data for a few epochs.
+    Verifica o processo de treinamento em um pequeno subconjunto de dados por algumas épocas.
 
-   Args:
-        model_class: The model class to be instantiated for verification.
-        train_loader: The DataLoader for the training dataset.
-        loss_function: The loss function to be used during training.
-        train_epoch_fn: The function that executes one training epoch.
-        device: The device (e.g., 'cuda' or 'cpu') to run the verification on.
+    Args:
+        model_class: A classe do modelo a ser instanciada para a verificação.
+        train_loader: O DataLoader para o dataset de treino.
+        loss_function: A função de perda a ser usada durante o treino.
+        train_epoch_fn: A função que executa uma única época de treino.
+        device: O dispositivo (ex: 'cuda' ou 'cpu') onde a verificação será executada.
     """
-    # Print a header for the verification process
-    print("--- Verifying train_epoch (training for 5 epochs) ---\n")
+    # Imprime o cabeçalho do processo de verificação
+    print("--- Verificando train_epoch (treinando por 5 épocas) ---\n")
 
-    # Define the number of epochs and batches for the verification run
+    # Define o número de épocas e lotes (batches) para a execução de verificação
     NUM_VERIFY_EPOCHS = 5
     NUM_VERIFY_BATCHES = 10
 
-    # Instantiate the model and move it to the specified device
+    # Instancia o modelo e o move para o dispositivo especificado
     verify_model = model_class(15).to(device)
-    # Initialize the Adam optimizer with a learning rate
+    # Inicializa o otimizador Adam com uma taxa de aprendizado específica
     verify_optimizer = optim.Adam(verify_model.parameters(), lr=0.0005)
 
-    # Create a small subset of the training data for quick verification
+    # Cria um pequeno subconjunto de dados de treino para verificação rápida
     batches = list(itertools.islice(iter(train_loader), NUM_VERIFY_BATCHES))
-    # Concatenate the images and labels from the selected batches
+    # Concatena as imagens e rótulos dos lotes selecionados
     all_images = torch.cat([b[0] for b in batches])
     all_labels = torch.cat([b[1] for b in batches])
-    # Create a TensorDataset and a DataLoader for the subset
+    # Cria um TensorDataset e um DataLoader para esse subconjunto
     verify_subset_dataset = TensorDataset(all_images, all_labels)
     verify_subset_loader = DataLoader(verify_subset_dataset, batch_size=train_loader.batch_size)
 
-    # Clone the initial weights of a specific layer to check for changes later
+    # Clona os pesos iniciais de uma camada específica para verificar alterações posteriores
     initial_weight = verify_model.conv_block1.block[0].weight.clone()
-    # Initialize a list to store the loss from each epoch
+    # Inicializa uma lista para armazenar a perda de cada época
     epoch_losses = []
 
-    print(f"Training on {len(verify_subset_dataset)} images for {NUM_VERIFY_EPOCHS} epochs:\n")
-    # Loop through the defined number of epochs for verification
+    print(f"Treinando em {len(verify_subset_dataset)} imagens por {NUM_VERIFY_EPOCHS} épocas:\n")
+    # Loop pelas épocas definidas para a verificação
     for epoch in range(NUM_VERIFY_EPOCHS):
-        # Run a single training epoch and get the loss
+        # Executa uma única época de treino e obtém a perda
         loss = train_epoch_fn(
             model=verify_model,
             train_loader=verify_subset_loader,
@@ -302,63 +301,62 @@ def verify_training_process(model_class, train_loader, loss_function, train_epoc
             optimizer=verify_optimizer,
             device=device
         )
-        # Append the loss to the list and print the epoch's result
+        # Adiciona a perda à lista e imprime o resultado da época
         epoch_losses.append(loss)
-        print(f"Epoch [{epoch+1}/{NUM_VERIFY_EPOCHS}], Loss: {loss:.4f}")
+        print(f"Época [{epoch+1}/{NUM_VERIFY_EPOCHS}], Perda: {loss:.4f}")
 
-    # Get the weights of the same layer after training has completed
+    # Obtém os pesos da mesma camada após o término do treinamento
     trained_weight = verify_model.conv_block1.block[0].weight
 
-    # Check if the weights have changed from their initial values
+    # Verifica se os pesos mudaram em relação aos seus valores iniciais
     weights_changed = not torch.equal(initial_weight, trained_weight)
     if weights_changed:
-        print("\nWeight Update Check:\tModel weights changed during training.")
+        print("\nChecagem de Atualização de Pesos:\tOs pesos do modelo mudaram durante o treino.")
     else:
-        print("\nWeight Update Check:\tModel weights DID NOT change.")
+        print("\nChecagem de Atualização de Pesos:\tOs pesos do modelo NÃO mudaram.")
 
-    # Check if the final loss is less than the initial loss
+    # Verifica se a perda final é menor do que a perda inicial
     loss_decreased = epoch_losses[-1] < epoch_losses[0]
     if loss_decreased:
-        print(f"Loss Trend Check:\tLoss decreased from {epoch_losses[0]:.4f} to {epoch_losses[-1]:.4f}.")
+        print(f"Checagem de Tendência da Perda:\tA perda diminuiu de {epoch_losses[0]:.4f} para {epoch_losses[-1]:.4f}.")
     else:
-        print(f"Loss Trend Check:\tLoss DID NOT show a decreasing trend.")
-        
+        print(f"Checagem de Tendência da Perda:\tA perda NÃO apresentou tendência de queda.")
         
         
 def verify_validation_process(model_class, val_loader, loss_function, validate_epoch_fn, device):
     """
-    Verifies the validation process on a small subset of data.
+    Verifica o processo de validação em um pequeno subconjunto de dados.
 
     Args:
-        model_class: The model class to be instantiated for verification.
-        val_loader: The DataLoader for the validation dataset.
-        loss_function: The loss function to be used during validation.
-        validate_epoch_fn: The function that executes one validation epoch.
-        device: The device (e.g., 'cuda' or 'cpu') to run the verification on.
+        model_class: A classe do modelo a ser instanciada para a verificação.
+        val_loader: O DataLoader para o dataset de validação.
+        loss_function: A função de perda a ser usada durante a validação.
+        validate_epoch_fn: A função que executa uma única época de validação.
+        device: O dispositivo (ex: 'cuda' ou 'cpu') onde a verificação será executada.
     """
-    # Print a header for the verification process
-    print("--- Verifying validate_epoch ---\n")
+    # Imprime o cabeçalho do processo de verificação
+    print("--- Verificando validate_epoch ---\n")
 
-    # Define the number of batches for the verification run
+    # Define o número de lotes para a execução de verificação
     NUM_VERIFY_BATCHES = 10
 
-    # Instantiate the model and move it to the specified device
+    # Instancia o modelo e o move para o dispositivo especificado
     verify_model = model_class(15).to(device)
 
-    # Create a small subset of the validation data for quick verification
+    # Cria um pequeno subconjunto de dados de validação para verificação rápida
     val_batches = list(itertools.islice(iter(val_loader), NUM_VERIFY_BATCHES))
-    # Concatenate the images and labels from the selected batches
+    # Concatena as imagens e rótulos dos lotes selecionados
     val_all_images = torch.cat([b[0] for b in val_batches])
     val_all_labels = torch.cat([b[1] for b in val_batches])
-    # Create a TensorDataset and a DataLoader for the subset
+    # Cria um TensorDataset e um DataLoader para esse subconjunto
     verify_val_subset_dataset = TensorDataset(val_all_images, val_all_labels)
     verify_val_subset_loader = DataLoader(verify_val_subset_dataset, batch_size=val_loader.batch_size)
 
-    # Clone the initial weights of a specific layer to check for changes
+    # Clona os pesos iniciais de uma camada específica para verificar se ocorrem alterações indevidas
     initial_weight = verify_model.conv_block1.block[0].weight.clone()
 
-    print(f"Validating on {len(verify_val_subset_dataset)} images:\n")
-    # Run a single validation epoch on the subset and get the outputs
+    print(f"Validando em {len(verify_val_subset_dataset)} imagens:\n")
+    # Executa uma única época de validação no subconjunto e obtém os retornos
     val_loss, val_accuracy = validate_epoch_fn(
         model=verify_model,
         val_loader=verify_val_subset_loader,
@@ -366,23 +364,25 @@ def verify_validation_process(model_class, val_loader, loss_function, validate_e
         device=device
     )
 
-    # Get the weights of the same layer after the validation function has run
+    # Obtém os pesos da mesma camada após a execução da função de validação
     validated_weight = verify_model.conv_block1.block[0].weight
 
-    # Print the returned loss and accuracy
-    print(f"Returned Validation Loss: {val_loss:.4f}")
-    print(f"Returned Validation Accuracy: {val_accuracy:.2f}%\n")
+    # Imprime a perda e acurácia retornadas
+    print(f"Perda de Validação Retornada: {val_loss:.4f}")
+    print(f"Acurácia de Validação Retornada: {val_accuracy:.2f}%\n")
 
-    # Check if the returned loss and accuracy are of the correct data type (float)
+    # Verifica se a perda e a acurácia retornadas são do tipo de dado correto (float)
     types_correct = isinstance(val_loss, float) and isinstance(val_accuracy, float)
     if types_correct:
-        print("\nReturn Types Check:\tFunction returned a float for loss and accuracy.")
+        print("\nChecagem dos Tipos de Retorno:\tA função retornou floats para perda e acurácia.")
     else:
-        print("\nReturn Types Check:\tFunction DID NOT return the correct data types.")
+        print("\nChecagem dos Tipos de Retorno:\tA função NÃO retornou os tipos de dados corretos.")
 
-    # Check that the weights have not changed during validation
+    # Verifica se os pesos permaneceram inalterados durante a validação
     weights_unchanged = torch.equal(initial_weight, validated_weight)
     if weights_unchanged:
-        print("Weight Integrity Check:\tModel weights were not changed during validation.")
+        print("Checagem de Integridade dos Pesos:\tOs pesos do modelo não foram alterados durante a validação.")
     else:
-        print("Weight Integrity Check:\tModel weights WERE CHANGED.")
+        print("Checagem de Integridade dos Pesos:\tOs pesos do modelo FORAM ALTERADOS.")
+
+```

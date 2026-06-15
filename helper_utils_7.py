@@ -11,36 +11,35 @@ import torchvision
 from torch.utils.data import DataLoader
 
 
-
 def load_cifar100_subset(target_classes, train_transform, val_transform, root='./cifar_100'):
     """
-    Loads and filters the CIFAR-100 dataset to include only specified target classes.
+    Carrega e filtra o dataset CIFAR-100 para incluir apenas as classes-alvo especificadas.
 
-    This function first checks for a local copy of the CIFAR-100 dataset and
-    downloads it if not found. It then filters both the training and test sets
-    to retain only the images and labels corresponding to the classes specified
-    in `target_classes`. The labels are remapped to be contiguous from 0.
+    Esta função primeiro verifica se existe uma cópia local do dataset CIFAR-100 e
+    realiza o download caso não seja encontrado. Em seguida, filtra os conjuntos de
+    treino e teste para reter apenas as imagens e rótulos correspondentes às classes
+    especificadas em `target_classes`. Os rótulos são remapeados para serem contíguos a partir de 0.
 
     Args:
-        target_classes: A list of class name strings to be included in the dataset subset.
-        train_transform: A torchvision transform to be applied to the training dataset images.
-        val_transform: A torchvision transform to be applied to the test/val dataset images.
-        root: The root directory where the dataset is stored or will be downloaded.
+        target_classes: Uma lista de strings com os nomes das classes a serem incluídas no subconjunto.
+        train_transform: Uma transformação do torchvision para ser aplicada às imagens de treino.
+        val_transform: Uma transformação do torchvision para ser aplicada às imagens de teste/validação.
+        root: O diretório raiz onde o dataset está armazenado ou será baixado.
 
     Returns:
-        A tuple containing the filtered training dataset and the filtered test dataset.
-        Returns (None, None) if a specified target class is not found.
+        Uma tupla contendo o dataset de treino filtrado e o dataset de teste filtrado.
+        Retorna (None, None) se uma classe-alvo especificada não for encontrada.
     """
-    # Construct the path to the CIFAR-100 dataset directory.
+    # Constrói o caminho para o diretório do dataset CIFAR-100.
     cifar100_path = os.path.join(root, 'cifar-100-python')
-    # Check if the dataset directory exists locally.
+    # Verifica se o diretório do dataset existe localmente.
     if os.path.isdir(cifar100_path):
-        print(f"Dataset found in '{root}'. Loading from local files.")
-    # If not found, inform the user that it will be downloaded.
+        print(f"Dataset encontrado em '{root}'. Carregando dos arquivos locais.")
+    # Se não for encontrado, informa ao usuário que o download será realizado.
     else:
-        print(f"Dataset not found in '{root}'. Downloading...")
+        print(f"Dataset não encontrado em '{root}'. Baixando...")
 
-    # Load the full CIFAR-100 training dataset.
+    # Carrega o dataset completo de treino do CIFAR-100.
     train_dataset_full = torchvision.datasets.CIFAR100(
         root=root, 
         train=True, 
@@ -48,313 +47,310 @@ def load_cifar100_subset(target_classes, train_transform, val_transform, root='.
         transform=train_transform
     )
 
-    # Load the full CIFAR-100 test dataset.
+    # Carrega o dataset completo de teste do CIFAR-100.
     test_dataset_full = torchvision.datasets.CIFAR100(
         root=root, 
         train=False, 
         download=True, 
         transform=val_transform
     )
-    print("Dataset loaded successfully.")
+    print("Dataset carregado com sucesso.")
 
-    # Get the list of all class names from the dataset.
+    # Obtém a lista de todos os nomes das classes do dataset.
     all_classes = train_dataset_full.classes
     try:
-        # Get the original integer indices for the target class names.
+        # Obtém os índices inteiros originais para os nomes das classes-alvo.
         target_indices = [all_classes.index(cls) for cls in target_classes]
-    # Handle the case where a specified class name is not in the dataset.
+    # Trata o caso onde um nome de classe especificado não existe no dataset.
     except ValueError as e:
-        print(f"Error: One of the target classes not found in CIFAR-100. {e}")
+        print(f"Erro: Uma das classes-alvo não foi encontrada no CIFAR-100. {e}")
         return None, None
         
-    # Create a mapping from the original class indices to new, contiguous indices (0, 1, 2, ...).
+    # Cria um mapeamento dos índices originais das classes para novos índices contíguos (0, 1, 2, ...).
     label_map = {old_label: new_label for new_label, old_label in enumerate(target_indices)}
 
-    # Define a helper function to filter a dataset based on the target classes.
+    # Define uma função auxiliar para filtrar um dataset com base nas classes-alvo.
     def _filter_dataset(dataset):
-        # Convert the list of targets to a NumPy array for efficient boolean indexing.
+        # Converte a lista de alvos em um array NumPy para indexação booleana eficiente.
         targets_np = np.array(dataset.targets)
-        # Create a boolean mask to identify which samples belong to the target classes.
+        # Cria uma máscara booleana para identificar quais amostras pertencem às classes-alvo.
         indices_to_keep = np.isin(targets_np, target_indices)
         
-        # Filter the dataset's image data using the boolean mask.
+        # Filtra os dados de imagem do dataset usando a máscara booleana.
         dataset.data = dataset.data[indices_to_keep]
         
-        # Get the original labels of the samples that are being kept.
+        # Obtém os rótulos originais das amostras que serão mantidas.
         original_targets_to_keep = targets_np[indices_to_keep]
-        # Remap the original labels to the new contiguous labels.
+        # Remapeia os rótulos originais para os novos rótulos contíguos.
         dataset.targets = [label_map[target] for target in original_targets_to_keep]
         
-        # Update the dataset's class list to only include the target classes.
+        # Atualiza a lista de classes do dataset para incluir apenas as classes-alvo.
         dataset.classes = target_classes
         return dataset
 
-    print(f"\nFiltering for {len(target_classes)} classes...")
-    # Apply the filtering logic to the full training dataset.
+    print(f"\nFiltrando para {len(target_classes)} classes...")
+    # Aplica a lógica de filtragem ao dataset de treino completo.
     train_dataset_subset = _filter_dataset(train_dataset_full)
-    # Apply the filtering logic to the full test dataset.
+    # Aplica a lógica de filtragem ao dataset de teste completo.
     test_dataset_subset = _filter_dataset(test_dataset_full)
-    print("Filtering complete. Returning training and validation datasets.")
+    print("Filtragem concluída. Retornando os datasets de treino e validação.")
     
-    # Return the filtered training and test subsets.
+    # Retorna os subconjuntos filtrados de treino e teste.
     return train_dataset_subset, test_dataset_subset
-
 
 
 def visualise_images(dataset, grid):
     """
-    Displays a grid of images from a dataset, with one random image per class.
+    Exibe uma grade de imagens de um dataset, com uma imagem aleatória por classe.
 
     Args:
-        dataset: The dataset object containing the images and labels.
-        grid (tuple): A tuple specifying the number of rows and columns for the image grid.
+        dataset: O objeto do dataset contendo as imagens e rótulos.
+        grid (tuple): Uma tupla especificando o número de linhas e colunas para a grade de imagens.
     """
 
-    # Create a shallow copy of the dataset to avoid modifying the original
+    # Cria uma cópia rasa (shallow copy) do dataset para evitar modificar o original
     dataset_copy = copy.copy(dataset)
-    # Set the transform on the copied dataset to convert images to tensors
+    # Define a transformação na cópia do dataset para converter as imagens em tensores
     dataset_copy.transform = torchvision.transforms.ToTensor()
 
-    # Create a DataLoader to handle batching and shuffling of the data
+    # Cria um DataLoader para gerenciar o agrupamento em lotes (batching) e o embaralhamento dos dados
     loader = DataLoader(dataset_copy, batch_size=64, shuffle=True)
 
-    # Unpack the grid dimensions from the input tuple
+    # Desempacota as dimensões da grade a partir da tupla de entrada
     rows, cols = grid
-    # Calculate the total number of images to display in the grid
+    # Calcula o número total de imagens a serem exibidas na grade
     num_images_to_show = rows * cols
 
-    # Get the dataset object from the DataLoader
+    # Obtém o objeto do dataset a partir do DataLoader
     dataset_to_show = loader.dataset
 
-    # Create a dictionary to store lists of indices for each class
+    # Cria um dicionário para armazenar listas de índices para cada classe
     class_indices = defaultdict(list)
-    # Iterate through the dataset to populate the class_indices dictionary
+    # Itera pelo dataset para preencher o dicionário class_indices
     for idx, target in enumerate(dataset_to_show.targets):
         class_indices[target].append(idx)
         
-    # Get the list of class names from the dataset
+    # Obtém a lista de nomes das classes do dataset
     class_names = dataset_to_show.classes
 
-    # Create a figure and a set of subplots for the grid layout
+    # Cria uma figura e um conjunto de subplots para o layout da grade
     fig, axes = plt.subplots(rows, cols, figsize=(cols * 2, rows * 2))
 
-    # Iterate over each subplot in the grid
+    # Itera sobre cada subplot na grade
     for i, ax in enumerate(axes.flat):
-        # If the current index is out of bounds, turn off the subplot axis
+        # Se o índice atual estiver fora dos limites, desativa o eixo do subplot
         if i >= num_images_to_show or i >= len(class_names):
             ax.axis('off')
             continue
             
-        # Set the class label based on the current iteration index
+        # Define o rótulo da classe com base no índice da iteração atual
         class_label = i
         
-        # Get the list of image indices for the current class
+        # Obtém a lista de índices de imagem para a classe atual
         indices_for_class = class_indices[class_label]
-        # If there are no images for this class, turn off the subplot axis
+        # Se não houver imagens para esta classe, desativa o eixo do subplot
         if not indices_for_class:
             ax.axis('off')
             continue
 
-        # Choose a random image index from the list for the current class
+        # Escolhe um índice de imagem aleatório da lista para a classe atual
         random_image_index = random.choice(indices_for_class)
         
-        # Retrieve the image tensor and its corresponding label from the dataset
+        # Recupera o tensor da imagem e seu rótulo correspondente do dataset
         image_tensor, _ = dataset_to_show[random_image_index]
         
-        # Convert the tensor to a NumPy array and transpose dimensions for display
+        # Converte o tensor em um array NumPy e transpõe as dimensões para exibição (H, W, C)
         img_to_display = image_tensor.numpy().transpose((1, 2, 0))
         
-        # Get the name of the class corresponding to the class label
+        # Obtém o nome da classe correspondente ao rótulo da classe
         class_name = class_names[class_label]
         
-        # Display the image on the current subplot
+        # Exibe a imagem no subplot atual
         ax.imshow(img_to_display)
         
-        # Set the title of the subplot to the capitalized class name
+        # Define o título do subplot com o nome da classe capitalizado
         ax.set_title(class_name.capitalize(), fontsize=16)
-        # Turn off the axis for a cleaner look
+        # Desativa os eixos para uma aparência mais limpa
         ax.axis('off')
 
-    # Adjust subplot parameters for a tight layout
+    # Ajusta os parâmetros dos subplots para um layout compacto
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-    # Display the plot
+    # Exibe o gráfico
     plt.show()
 
-    # Clean up the copied dataset to free up memory
+    # Limpa a cópia do dataset para liberar memória
     del dataset_copy
     
     
-
 def plot_training_metrics(metrics):
     """
-    Plots the training and validation metrics from a model training process.
+    Plota as métricas de treino e validação do processo de treinamento de um modelo.
 
-    This function generates two side-by-side plots:
-    1. Training Loss vs. Validation Loss.
-    2. Validation Accuracy.
+    Esta função gera dois gráficos lado a lado:
+    1. Perda de Treino vs. Perda de Validação.
+    2. Acurácia de Validação.
 
     Args:
-        metrics (list): A list or tuple containing three lists:
+        metrics (list): Uma lista ou tupla contendo três listas:
                         [train_losses, val_losses, val_accuracies].
     """
-    # Unpack the metrics into their respective lists
+    # Desempacota as métricas em suas respectivas listas
     train_losses, val_losses, val_accuracies = metrics
     
-    # Determine the number of epochs from the length of the training losses list
+    # Determina o número de épocas a partir do tamanho da lista de perdas de treino
     num_epochs = len(train_losses)
-    # Create a 1-indexed range of epoch numbers for the x-axis
+    # Cria um intervalo indexado em 1 com os números das épocas para o eixo X
     epochs = range(1, num_epochs + 1)
 
-    # Create a figure and a set of subplots with 1 row and 2 columns
+    # Cria uma figura e um conjunto de subplots com 1 linha e 2 colunas
     fig, axes = plt.subplots(1, 2, figsize=(14, 6))
 
-    # --- Configure the first subplot for training and validation loss ---
-    # Select the first subplot
+    # --- Configura o primeiro subplot para a perda de treino e validação ---
+    # Seleciona o primeiro subplot
     ax1 = axes[0]
-    # Plot training loss data
-    ax1.plot(epochs, train_losses, color='#085c75', linewidth=2.5, marker='o', markersize=5, label='Training Loss')
-    # Plot validation loss data
-    ax1.plot(epochs, val_losses, color='#fa5f64', linewidth=2.5, marker='o', markersize=5, label='Validation Loss')
-    # Set the title and axis labels for the loss plot
-    ax1.set_title('Training & Validation Loss', fontsize=14)
-    ax1.set_xlabel('Epoch', fontsize=12)
-    ax1.set_ylabel('Loss', fontsize=12)
-    # Display the legend
+    # Plota os dados da perda de treino
+    ax1.plot(epochs, train_losses, color='#085c75', linewidth=2.5, marker='o', markersize=5, label='Perda de Treino')
+    # Plota os dados da perda de validação
+    ax1.plot(epochs, val_losses, color='#fa5f64', linewidth=2.5, marker='o', markersize=5, label='Perda de Validação')
+    # Define o título e os rótulos dos eixos para o gráfico de perda
+    ax1.set_title('Perda de Treino e Validação', fontsize=14)
+    ax1.set_xlabel('Época', fontsize=12)
+    ax1.set_ylabel('Perda', fontsize=12)
+    # Exibe a legenda
     ax1.legend()
-    # Add a grid for better readability
+    # Adiciona uma grade para melhor legibilidade
     ax1.grid(True, linestyle='--', alpha=0.6)
 
-    # --- Configure the second subplot for validation accuracy ---
-    # Select the second subplot
+    # --- Configura o segundo subplot para a acurácia de validação ---
+    # Seleciona o segundo subplot
     ax2 = axes[1]
-    # Plot validation accuracy data
-    ax2.plot(epochs, val_accuracies, color='#fa5f64', linewidth=2.5, marker='o', markersize=5, label='Validation Accuracy')
-    # Set the title and axis labels for the accuracy plot
-    ax2.set_title('Validation Accuracy', fontsize=14)
-    ax2.set_xlabel('Epoch', fontsize=12)
-    ax2.set_ylabel('Accuracy (%)', fontsize=12)
-    # Display the legend
+    # Plota os dados da acurácia de validação
+    ax2.plot(epochs, val_accuracies, color='#fa5f64', linewidth=2.5, marker='o', markersize=5, label='Acurácia de Validação')
+    # Define o título e os rótulos dos eixos para o gráfico de acurácia
+    ax2.set_title('Acurácia de Validação', fontsize=14)
+    ax2.set_xlabel('Época', fontsize=12)
+    ax2.set_ylabel('Acurácia (%)', fontsize=12)
+    # Exibe a legenda
     ax2.legend()
-    # Add a grid for better readability
+    # Adiciona uma grade para melhor legibilidade
     ax2.grid(True, linestyle='--', alpha=0.6)
     
-    # --- Apply dynamic and consistent styling to both subplots ---
-    # Calculate a suitable interval for the x-axis ticks to avoid clutter
+    # --- Aplica estilização dinâmica e consistente a ambos os subplots ---
+    # Calcula um intervalo adequado para as marcações do eixo X para evitar poluição visual
     x_interval = (num_epochs - 1) // 10 + 1
 
-    # Loop through each subplot to apply common axis settings
+    # Percorre cada subplot para aplicar as configurações comuns de eixo
     for ax in axes:
-        # Set the y-axis to start at 0 and the x-axis to span the epochs
+        # Define o eixo Y para iniciar em 0 e o eixo X para abranger as épocas
         ax.set_ylim(bottom=0)
         ax.set_xlim(left=1, right=num_epochs)
         
-        # Set the major tick locator for the x-axis using the dynamic interval
+        # Define o localizador de marcações principais para o eixo X usando o intervalo dinâmico
         ax.xaxis.set_major_locator(mticker.MultipleLocator(x_interval))
-        # Set the font size for the tick labels on both axes
+        # Define o tamanho da fonte para os rótulos das marcações em ambos os eixos
         ax.tick_params(axis='both', which='major', labelsize=10)
 
-    # Adjust subplot parameters for a tight layout
+    # Ajusta os parâmetros dos subplots para um layout compacto
     plt.tight_layout()
-    # Display the plots
+    # Exibe os gráficos
     plt.show()
-    
     
     
 def visualise_predictions(model, data_loader, device, grid):
     """
-    Visualizes model predictions on a grid of images from a dataset.
+    Visualiza as previsões do modelo em uma grade de imagens de um dataset.
 
     Args:
-        model: The trained PyTorch model to use for predictions.
-        data_loader: The PyTorch DataLoader for the dataset.
-        device: The device (e.g., 'cpu' or 'cuda') to run the model on.
-        grid (tuple): A tuple specifying the number of rows and columns for the image grid.
+        model: O modelo PyTorch treinado a ser usado para as previsões.
+        data_loader: O DataLoader do PyTorch para o dataset.
+        device: O dispositivo (ex: 'cpu' ou 'cuda') onde o modelo será executado.
+        grid (tuple): Uma tupla especificando o número de linhas e colunas para a grade de imagens.
     """
-    # Set the model to evaluation mode
+    # Define o modelo para modo de avaliação
     model.eval()
 
-    # Get the dataset and class names from the data loader
+    # Obtém o dataset e os nomes das classes a partir do carregador de dados
     dataset = data_loader.dataset
     class_names = dataset.classes
     
-    # Define mean and standard deviation values for de-normalizing the images
+    # Define os valores de média e desvio padrão para desnormalizar as imagens
     cifar100_mean = np.array([0.5071, 0.4867, 0.4408])
     cifar100_std = np.array([0.2675, 0.2565, 0.2761])
     
-    # Create a dictionary to store lists of indices for each class
+    # Cria um dicionário para armazenar listas de índices para cada classe
     class_indices = defaultdict(list)
-    # Iterate through the dataset to populate the class_indices dictionary
+    # Itera pelo dataset para preencher o dicionário class_indices
     for idx, target in enumerate(dataset.targets):
         class_indices[target].append(idx)
         
-    # Unpack the grid dimensions
+    # Desempacota as dimensões da grade
     rows, cols = grid
-    # Calculate the total number of images to display
+    # Calcula o número total de imagens a serem exibidas
     num_images_to_show = rows * cols
     
-    # Create a figure and a set of subplots
+    # Cria uma figura e um conjunto de subplots
     fig, axes = plt.subplots(rows, cols, figsize=(cols * 2, rows * 2)) 
-    # Adjust the spacing between subplots
+    # Ajusta o espaçamento entre os subplots
     plt.subplots_adjust(wspace=0.3, hspace=0.8)
 
-    # Iterate over each subplot in the grid
+    # Itera sobre cada subplot na grade
     for i, ax in enumerate(axes.flat):
-        # If the current index is out of bounds, turn off the subplot axis
+        # Se o índice atual estiver fora dos limites, desativa o eixo do subplot
         if i >= num_images_to_show or i >= len(class_names):
             ax.axis('off')
             continue
             
-        # Set the class label based on the current iteration index
+        # Define o rótulo da classe com base no índice da iteração atual
         class_label = i
         
-        # Get the list of image indices for the current class
+        # Obtém a lista de índices de imagem para la classe atual
         indices_for_class = class_indices[class_label]
-        # If there are no images for this class, turn off the subplot axis
+        # Se não houver imagens para esta classe, desativa o eixo do subplot
         if not indices_for_class:
             ax.axis('off')
             continue
 
-        # Choose a random image index from the list for the current class
+        # Escolhe um índice de imagem aleatório da lista para a classe atual
         random_image_index = random.choice(indices_for_class)
-        # Retrieve the image tensor and its true label
+        # Recupera o tensor da imagem e seu rótulo real
         image_tensor, true_label = dataset[random_image_index]
         
-        # Add a batch dimension and move the tensor to the specified device
+        # Adiciona uma dimensão de lote (batch) e move o tensor para o dispositivo especificado
         image_batch = image_tensor.unsqueeze(0).to(device)
         
-        # Disable gradient calculations for inference
+        # Desativa o cálculo de gradientes para a inferência
         with torch.no_grad():
-            # Get model predictions
+            # Obtém as previsões do modelo
             output = model(image_batch)
-            # Find the index of the highest score, which is the predicted class
+            # Encontra o índice da maior pontuação, que representa a classe prevista
             _, predicted_index = torch.max(output, 1)
         
-        # Extract the predicted label as a Python number
+        # Extrai o rótulo previsto como um número nativo do Python
         predicted_label = predicted_index.item()
         
-        # Convert tensor to a NumPy array and transpose dimensions for display
+        # Converte o tensor em um array NumPy e transpõe as dimensões para exibição
         img_np = image_tensor.cpu().numpy().transpose((1, 2, 0))
-        # De-normalize the image using the predefined mean and std
+        # Desnormaliza a imagem usando a média e desvio padrão predefinidos
         denormalized_img = cifar100_std * img_np + cifar100_mean
-        # Clip the pixel values to the valid range [0, 1]
+        # Limita os valores dos pixels para o intervalo válido [0, 1]
         clipped_img = np.clip(denormalized_img, 0, 1)
         
-        # Get the string names for the true and predicted labels
+        # Obtém os nomes em string para os rótulos real e previsto
         true_name = class_names[true_label]
         predicted_name = class_names[predicted_label]
         
-        # Set the title color to green for correct predictions and red for incorrect ones
+        # Define a cor do título como verde para previsões corretas e vermelha para incorretas
         title_color = 'green' if true_label == predicted_label else 'red'
         
-        # Display the image
+        # Exibe a imagem
         ax.imshow(clipped_img)
-        # Set the title with true and predicted labels
-        ax.set_title(f"True: {true_name.capitalize()}\nPred: {predicted_name.capitalize()}", 
+        # Define o título exibindo os rótulos Real e Previsto
+        ax.set_title(f"Real: {true_name.capitalize()}\nPrev: {predicted_name.capitalize()}", 
                      color=title_color, fontsize=10, pad=5)
-        # Turn off the axis
+        # Desativa o eixo
         ax.axis('off')
 
-    # Adjust subplot parameters for a tight layout
+    # Ajusta os parâmetros dos subplots para um layout compacto
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-    # Show the final plot
+    # Exibe o gráfico final
     plt.show()
