@@ -18,4 +18,10 @@ coursera_videos
 coursera_resources
 cifar_100
 cifar_100.tar.xz
+<<<<<<< Updated upstream
 dataset
+=======
+*.mp4
+*dlvideo.py
+Tour pelos Projetos do LabSEA.mp4
+>>>>>>> Stashed changes
