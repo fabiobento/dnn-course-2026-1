@@ -1,6 +1,3 @@
-Aqui está o código completo com as *docstrings*, funções internas e todos os comentários traduzidos e adaptados para o português brasileiro, mantendo a exata estrutura e lógica do seu código original:
-
-```python
 import itertools
 import os
 import random
@@ -384,5 +381,3 @@ def verify_validation_process(model_class, val_loader, loss_function, validate_e
         print("Checagem de Integridade dos Pesos:\tOs pesos do modelo não foram alterados durante a validação.")
     else:
         print("Checagem de Integridade dos Pesos:\tOs pesos do modelo FORAM ALTERADOS.")
-
-```
